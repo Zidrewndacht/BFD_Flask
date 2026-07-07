@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>{% block titulo %}Meu site{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <a href="/">Início</a> |
+        <a href="/sobre">Sobre</a> |
+        <a href="/projetos">Projetos</a>
+    </nav>
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026</p>
+    </footer>
+</body>
+</html>

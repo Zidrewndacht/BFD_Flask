@@ -1,0 +1,46 @@
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: #f8f8f8;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+header {
+    background-color: #333;
+    padding: 1rem;
+}
+
+header nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 1rem;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+article {
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+article h2 {
+    margin-top: 0;
+}
