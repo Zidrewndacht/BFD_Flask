@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Descubra sua idade</h1>
+    <form method="POST" action="{{ url_for('index') }}">
+        <p><label>Nome: <input type="text" name="nome"></label></p>
+        <p><label>Ano de nascimento: <input type="text" name="ano"></label></p>
+        <button type="submit">Calcular</button>
+    </form>
+{% endblock %}

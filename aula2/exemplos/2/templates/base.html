@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>{% block titulo %}Saudação{% endblock %}</title>
+    <style>
+        .flash-success { color: darkgreen; background: #efe; padding: 10px; border: 1px solid green; }
+        .flash-error   { color: darkred;   background: #fee; padding: 10px; border: 1px solid red; }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+</body>
+</html>

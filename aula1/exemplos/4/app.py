@@ -6,4 +6,5 @@ app = Flask(__name__)
 def ola(nome):
     return render_template("ola.html", pessoa=nome)
 
-# falta algo aqui.
+if __name__ == "__main__":
+    app.run(debug=True)

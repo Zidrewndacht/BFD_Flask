@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>Meu Site</title>
+    <style>
+        .flash-error { color: darkred; background: #fee; padding: 10px; border: 1px solid red; }
+        .flash-success { color: darkgreen; background: #efe; padding: 10px; border: 1px solid green; }
+    </style>
+</head>
+<body>
+    <nav><a href="/">Home</a> | <a href="/contato">Contato</a></nav>
+    <hr>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+</body>
+</html>

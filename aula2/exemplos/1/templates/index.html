@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+    {% if erro %}
+        <p style="color: red;"><strong>{{ erro }}</strong></p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('index') }}">
+        <p>
+            <label>Nome: <input type="text" name="nome" value="{{ nome or '' }}"></label>
+        </p>
+        <p>
+            <label>Ano de nascimento: <input type="text" name="ano" value="{{ ano or '' }}"></label>
+        </p>
+        <button type="submit">Calcular</button>
+    </form>
+{% endblock %}

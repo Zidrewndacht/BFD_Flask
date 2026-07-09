@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-br">
+<head><meta charset="utf-8"><title>Favoritos</title></head>
+<body>
+    <h1>Meus favoritos</h1>
+    <p>Você visitou esta página <strong>{{ visitas }}</strong> vez(es).</p>
+
+    <form method="POST" action="{{ url_for('adicionar') }}">
+        <input type="text" name="item" placeholder="Adicionar favorito..." required>
+        <button type="submit">Adicionar</button>
+    </form>
+
+    {% if favoritos %}
+        <ul>
+        {% for f in favoritos %}
+            <li>{{ f }}</li>
+        {% endfor %}
+        </ul>
+        <p><a href="{{ url_for('limpar') }}">Limpar favoritos</a></p>
+    {% else %}
+        <p>Nenhum favorito ainda.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('resetar_tudo') }}">Resetar tudo (visitas + favoritos)</a></p>
+</body>
+</html>
