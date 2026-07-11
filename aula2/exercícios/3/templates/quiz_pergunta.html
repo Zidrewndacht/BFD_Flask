@@ -1,2 +1,16 @@
-
-        <!-- seu código aqui -->
+{% extends "base.html" %}
+{% block conteudo %}
+    <h2>Pergunta {{ num }} de {{ total }}</h2>
+    <p><strong>{{ pergunta.texto }}</strong></p>
+    
+    <form method="POST">
+        {% for opcao in pergunta.opcoes %}
+            <label>
+                <input type="radio" name="resposta" value="{{ opcao }}" required>
+                {{ opcao }}
+            </label><br>
+        {% endfor %}
+        <br>
+        <button type="submit">Confirmar Resposta</button>
+    </form>
+{% endblock %}

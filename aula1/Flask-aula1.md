@@ -225,6 +225,30 @@ Altere `ola()` para retornar:
 2. A hora atual do servidor (use `from datetime import datetime`)
 
 
+<details>
+<summary><strong>Ver solução proposta</strong></summary>
+
+```python
+from flask import Flask
+from datetime import datetime
+
+app = Flask(__name__)
+
+nome = "Luis"
+
+@app.route("/")
+def ola():
+    agora = datetime.now().strftime("%H:%M:%S")
+    return f"<h2>Olá, {nome}.</h2><p>Hora do servidor: {agora}</p>"
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+Note que a hora muda a cada refresh — o Flask executa a função em cada requisição, não apenas uma vez.
+
+</details>
+
 ---
 
 ## 2. Rotas e variáveis de URL
@@ -751,6 +775,144 @@ Você deve escrever apenas os arquivos `base.html`, `index.html`, `sobre.html`, 
 - [ ] O CSS é carregado (você vê o `body` com cor de fundo).
 - [ ] Na página `/projetos`, os dados vêm de Python — alterar `lista` em `app.py` altera a página sem mexer no HTML.
 
+<details>
+<summary><strong>Ver solução proposta — templates e CSS</strong></summary>
+
+**`templates/base.html`**
+
+```html
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}Meu site{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('index') }}">Início</a>
+            <a href="{{ url_for('sobre') }}">Sobre</a>
+            <a href="{{ url_for('projetos') }}">Projetos</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 — Construído com Flask e Jinja2</p>
+    </footer>
+</body>
+</html>
+```
+
+**`templates/index.html`**
+
+```html
+{% extends "base.html" %}
+
+{% block titulo %}Início — Meu site{% endblock %}
+
+{% block conteudo %}
+    <h1>Maria Silva</h1>
+    <p>Estudante de desenvolvimento web fullstack. Este é meu primeiro site dinâmico com Flask.</p>
+{% endblock %}
+```
+
+**`templates/sobre.html`**
+
+```html
+{% extends "base.html" %}
+
+{% block titulo %}Sobre — Meu site{% endblock %}
+
+{% block conteudo %}
+    <h1>Sobre mim</h1>
+    <p>Habilidades que venho desenvolvendo:</p>
+    <ul>
+        {% for h in habilidades %}
+            <li>{{ h }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+```
+
+**`templates/projetos.html`**
+
+```html
+{% extends "base.html" %}
+
+{% block titulo %}Projetos — Meu site{% endblock %}
+
+{% block conteudo %}
+    <h1>Projetos</h1>
+    {% for p in projetos %}
+        <article>
+            <h2><a href="{{ p.url }}">{{ p.nome }}</a></h2>
+            <p>{{ p.descricao }}</p>
+        </article>
+    {% endfor %}
+{% endblock %}
+```
+
+**`static/style.css`**
+
+```css
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: #f8f8f8;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+header {
+    background-color: #333;
+    padding: 1rem;
+}
+
+header nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 1rem;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+article {
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+article h2 {
+    margin-top: 0;
+}
+```
+
+**Ponto de verificação didático:** altere no `app.py` a rota `@app.route("/sobre")` para `@app.route("/about")` e reinicie o servidor. O link no cabeçalho (`{{ url_for('sobre') }}`) continua funcionando? Sim — porque `url_for` consulta o **nome da função Python** (`sobre`), não o caminho da URL. Esse é exatamente o mecanismo explicado na seção 6.1.
+
+</details>
+
 ---
 
 ## 7. Recapitulação
@@ -782,7 +944,11 @@ projeto/
     └── logo.png
 ```
 
-### Referências
+### Na próxima aula
+
+Vamos tratar do sentido oposto do ciclo: dados vindos **do navegador para o servidor** via formulários HTTP (`POST`), o objeto `request`, mensagens de feedback ao usuário (`flash`) e sessões — o mecanismo que permite ao servidor lembrar de um visitante entre requisições.
+
+### Referências completas
 
 1. Flask — Quickstart: https://flask.palletsprojects.com/en/stable/quickstart/
 2. Flask — Tutorial oficial (será a base da Aula 3): https://flask.palletsprojects.com/en/stable/tutorial/

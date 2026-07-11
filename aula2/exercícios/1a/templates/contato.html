@@ -6,10 +6,25 @@
 </head>
 <body>
     <h1>Entre em contato</h1>
-
-    <!-- seu código aqui -->
+    
+    {% if erro %}
+        <p style="color: red;"><strong>{{ erro }}</strong></p>
+    {% endif %}
+    
     <form method="POST" action="/contato">
-        <!-- seu código aqui -->
+        <p>
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome" value="{{ request.form.nome or '' }}">
+        </p>
+        <p>
+            <label for="email">E-mail:</label><br>
+            <input type="email" id="email" name="email" value="{{ request.form.email or '' }}">
+        </p>
+        <p>
+            <label for="mensagem">Mensagem:</label><br>
+            <textarea id="mensagem" name="mensagem" rows="4" cols="40">{{ request.form.mensagem or '' }}</textarea>
+        </p>
+        <button type="submit">Enviar</button>
     </form>
 </body>
 </html>

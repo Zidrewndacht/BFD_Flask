@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block titulo %}Projetos — Meu site{% endblock %}
+
+{% block conteudo %}
+    <h1>Projetos</h1>
+    {% for p in projetos %}
+        <article>
+            <h2><a href="{{ p.url }}">{{ p.nome }}</a></h2>
+            <p>{{ p.descricao }}</p>
+        </article>
+    {% endfor %}
+{% endblock %}

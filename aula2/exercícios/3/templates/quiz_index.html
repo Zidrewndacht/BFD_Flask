@@ -1,2 +1,6 @@
-
-        <!-- seu código aqui -->
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Bem-vindo ao Quiz!</h1>
+    <p>Teste seus conhecimentos com 3 perguntas.</p>
+    <a href="{{ url_for('pergunta', num=1) }}">Iniciar Quiz</a>
+{% endblock %}

@@ -1,2 +1,13 @@
-
-        <!-- seu código aqui -->
+<!doctype html>
+<html>
+<head><title>Quiz</title></head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+            <p style="color: {% if cat == 'success' %}green{% else %}red{% endif %};"><b>{{ msg }}</b></p>
+        {% endfor %}
+    {% endwith %}
+    
+    {% block conteudo %}{% endblock %}
+</body>
+</html>

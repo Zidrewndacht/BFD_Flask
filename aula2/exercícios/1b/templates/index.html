@@ -1,4 +1,22 @@
 {% extends "base.html" %}
 {% block conteudo %}
-        <!-- seu código aqui -->
+    <h1>Conversor de temperatura</h1>
+
+    {% if erro %}
+        <p style="color: red;"><strong>{{ erro }}</strong></p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('index') }}">
+        <p>
+            <label>Temperatura em °C:
+                <input type="text" name="valor" value="{{ valor }}">
+            </label>
+        </p>
+        <p>
+            Converter para:
+            <label><input type="radio" name="unidade" value="F" {% if unidade == 'F' %}checked{% endif %}> Fahrenheit</label>
+            <label><input type="radio" name="unidade" value="K" {% if unidade == 'K' %}checked{% endif %}> Kelvin</label>
+        </p>
+        <button type="submit">Converter</button>
+    </form>
 {% endblock %}

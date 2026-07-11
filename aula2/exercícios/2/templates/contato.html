@@ -2,6 +2,8 @@
 {% block conteudo %}
     <h1>Entre em contato</h1>
     <form method="POST" action="{{ url_for('contato') }}">
-        <!-- seu código aqui -->
+        <p>Nome: <input type="text" name="nome"></p>
+        <p>Mensagem: <textarea name="mensagem"></textarea></p>
+        <button type="submit">Enviar</button>
     </form>
 {% endblock %}

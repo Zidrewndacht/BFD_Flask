@@ -257,7 +257,74 @@ if __name__ == "__main__":
 - [ ] Preencher corretamente e enviar exibe a página de "Obrigado".
 - [ ] **O teste do F5:** Após ver a página de "Obrigado", aperte **F5** no navegador. Observe o que o navegador pergunta e o que acontece se você confirmar.
 
----
+<details>
+<summary><strong>Ver solução proposta</strong></summary>
+
+**`app.py`**
+
+```python
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route("/contato", methods=["GET", "POST"])
+def contato():
+    erro = None
+    
+    if request.method == "POST":
+        nome = request.form.get("nome", "").strip()
+        email = request.form.get("email", "").strip()
+        mensagem = request.form.get("mensagem", "").strip()
+        
+        if not nome or not mensagem:
+            erro = "Nome e mensagem são obrigatórios."
+        else:
+            # Dados válidos (em uma app real, salvaríamos no banco ou enviaríamos email)
+            return f"<h1>Obrigado, {nome}!</h1><p>Sua mensagem foi recebida.</p><a href='/contato'>Voltar</a>"
+    
+    # Se é GET, ou se houve erro no POST, renderiza o formulário
+    return render_template("contato.html", erro=erro)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+**`templates/contato.html`**
+
+```html
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>Contato</title>
+</head>
+<body>
+    <h1>Entre em contato</h1>
+    
+    {% if erro %}
+        <p style="color: red;"><strong>{{ erro }}</strong></p>
+    {% endif %}
+    
+    <form method="POST" action="/contato">
+        <p>
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome" value="{{ request.form.nome or '' }}">
+        </p>
+        <p>
+            <label for="email">E-mail:</label><br>
+            <input type="email" id="email" name="email" value="{{ request.form.email or '' }}">
+        </p>
+        <p>
+            <label for="mensagem">Mensagem:</label><br>
+            <textarea id="mensagem" name="mensagem" rows="4" cols="40">{{ request.form.mensagem or '' }}</textarea>
+        </p>
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>
+```
+</details>
+
 
 
 ## 🧪 Prática 1b — Formulário de conversão de temperatura
@@ -277,6 +344,94 @@ Construa uma aplicação similar ao exemplo guiado, mas com outro domínio.
 2. Três templates: `base.html`, `index.html`, `resultado.html`.
 3. Em caso de erro, o formulário é reexibido com a mensagem e os campos repopulados.
 4. Em caso de sucesso, exibe uma página com a conversão.
+
+<details>
+<summary><strong>Ver solução proposta</strong></summary>
+
+**`app.py`**
+
+```python
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    erro = None
+    valor_str = ""
+    unidade = "F"
+
+    if request.method == "POST":
+        valor_str = request.form.get("valor", "").strip()
+        unidade = request.form.get("unidade", "F").strip().upper()
+
+        try:
+            celsius = float(valor_str)
+        except ValueError:
+            erro = "Informe um valor numérico (ex: 25 ou -3.5)."
+        else:
+            if unidade not in ("F", "K"):
+                erro = "Unidade deve ser F (Fahrenheit) ou K (Kelvin)."
+            else:
+                if unidade == "F":
+                    convertido = celsius * 9 / 5 + 32
+                    nome_unidade = "Fahrenheit"
+                else:
+                    convertido = celsius + 273.15
+                    nome_unidade = "Kelvin"
+
+                return render_template(
+                    "resultado.html",
+                    celsius=celsius,
+                    convertido=convertido,
+                    unidade=nome_unidade,
+                )
+
+    return render_template("index.html", erro=erro, valor=valor_str, unidade=unidade)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+**`templates/index.html`**
+
+```html
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Conversor de temperatura</h1>
+
+    {% if erro %}
+        <p style="color: red;"><strong>{{ erro }}</strong></p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('index') }}">
+        <p>
+            <label>Temperatura em °C:
+                <input type="text" name="valor" value="{{ valor }}">
+            </label>
+        </p>
+        <p>
+            Converter para:
+            <label><input type="radio" name="unidade" value="F" {% if unidade == 'F' %}checked{% endif %}> Fahrenheit</label>
+            <label><input type="radio" name="unidade" value="K" {% if unidade == 'K' %}checked{% endif %}> Kelvin</label>
+        </p>
+        <button type="submit">Converter</button>
+    </form>
+{% endblock %}
+```
+
+**`templates/resultado.html`**
+
+```html
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Resultado</h1>
+    <p>{{ celsius }} °C equivale a <strong>{{ "%.2f"|format(convertido) }} {{ unidade }}</strong>.</p>
+    <p><a href="{{ url_for('index') }}">Nova conversão</a></p>
+{% endblock %}
+```
+
+</details>
 
 ---
 
@@ -498,6 +653,98 @@ Pegue o código da **Prática 1a** e refatore-o para usar o padrão PRG e Flash 
    - Se os dados forem inválidos, use `flash("Erro: ...", "error")` e redirecione de volta para `/contato` (o GET exibirá o formulário novamente, agora com a mensagem de erro no topo).
    - Se os dados forem válidos, use `flash("Mensagem enviada!", "success")` e redirecione para `/`.
 
+<details>
+<summary><strong>Ver solução proposta</strong></summary>
+
+**`app.py`**
+
+```python
+from flask import Flask, render_template, request, redirect, url_for, flash
+
+app = Flask(__name__)
+app.secret_key = "super-secreta-chave-de-desenvolvimento-123"
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/contato", methods=["GET", "POST"])
+def contato():
+    if request.method == "POST":
+        nome = request.form.get("nome", "").strip()
+        mensagem = request.form.get("mensagem", "").strip()
+        
+        if not nome or not mensagem:
+            flash("Nome e mensagem são obrigatórios.", "error")
+            return redirect(url_for('contato'))
+        
+        # Dados válidos
+        flash(f"Obrigado, {nome}! Sua mensagem foi recebida.", "success")
+        return redirect(url_for('index'))
+    
+    # GET: exibe o formulário
+    return render_template("contato.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+**`templates/base.html` (exemplo)**
+
+```html
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>Meu Site</title>
+    <style>
+        .flash-error { color: darkred; background: #fee; padding: 10px; border: 1px solid red; }
+        .flash-success { color: darkgreen; background: #efe; padding: 10px; border: 1px solid green; }
+    </style>
+</head>
+<body>
+    <nav><a href="/">Home</a> | <a href="/contato">Contato</a></nav>
+    <hr>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+</body>
+</html>
+```
+
+**`templates/index.html`**
+```html
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Bem-vindo!</h1>
+    <p>Esta é a página inicial.</p>
+{% endblock %}
+```
+
+**`templates/contato.html`**
+```html
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Entre em contato</h1>
+    <form method="POST" action="{{ url_for('contato') }}">
+        <p>Nome: <input type="text" name="nome"></p>
+        <p>Mensagem: <textarea name="mensagem"></textarea></p>
+        <button type="submit">Enviar</button>
+    </form>
+{% endblock %}
+```
+
+</details>
+
 ---
 
 ## 5. Sessões: Lembrando do usuário
@@ -689,6 +936,142 @@ PERGUNTAS = [
 - Para validar a ordem, verifique se `session.get('passo_atual')` corresponde ao `<num>` da URL.
 - Lembre-se de configurar a `secret_key`.
 - Use flashes para dar feedback imediato após cada resposta ("Correto!" / "Errado!").
+
+<details>
+<summary><strong>Ver solução proposta</strong></summary>
+
+`app.py`
+
+```python
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+
+app = Flask(__name__)
+app.secret_key = "chave-secreta-para-o-quiz"
+
+PERGUNTAS = [
+    {
+        "texto": "Qual é a capital da Austrália?",
+        "opcoes": ["Sydney", "Melbourne", "Canberra", "Perth"],
+        "resposta": "Canberra"
+    },
+    {
+        "texto": "Qual linguagem o Flask usa?",
+        "opcoes": ["Java", "Python", "Ruby", "PHP"],
+        "resposta": "Python"
+    },
+    {
+        "texto": "Qual o resultado de 1 + 1?",
+        "opcoes": ["2", "10", "11", "3", "Depende"],
+        "resposta": "Depende",
+    },
+]
+
+@app.route("/")
+def index():
+    # Zera o estado do quiz ao voltar para o início
+    session.clear()
+    return render_template("quiz_index.html")
+
+@app.route("/pergunta/<int:num>", methods=["GET", "POST"])
+def pergunta(num):
+    # Validação de ordem e existência da pergunta
+    passo_atual = session.get("passo_atual", 1)
+    if num != passo_atual or num < 1 or num > len(PERGUNTAS):
+        return redirect(url_for('index'))
+    
+    # O índice da lista é num - 1
+    p = PERGUNTAS[num - 1]
+    
+    if request.method == "POST":
+        resposta_usuario = request.form.get("resposta")
+        
+        if resposta_usuario == p["resposta"]:
+            session["acertos"] = session.get("acertos", 0) + 1
+            flash("Resposta correta!", "success")
+        else:
+            flash(f"Errado! A resposta era: {p['resposta']}", "error")
+        
+        # Avança o passo
+        session["passo_atual"] = num + 1
+        
+        # Redireciona para a próxima ou para o resultado
+        if num == len(PERGUNTAS):
+            return redirect(url_for('resultado'))
+        else:
+            return redirect(url_for('pergunta', num=num + 1))
+    
+    # GET: exibe a pergunta
+    return render_template("quiz_pergunta.html", pergunta=p, num=num, total=len(PERGUNTAS))
+
+@app.route("/resultado")
+def resultado():
+    acertos = session.get("acertos", 0)
+    total = len(PERGUNTAS)
+    session.clear() # Limpa a sessão ao finalizar
+    return render_template("quiz_resultado.html", acertos=acertos, total=total)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+`templates/base.html` (apenas o bloco de flashes e conteúdo)
+```html
+<!doctype html>
+<html>
+<head><title>Quiz</title></head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+            <p style="color: {% if cat == 'success' %}green{% else %}red{% endif %};"><b>{{ msg }}</b></p>
+        {% endfor %}
+    {% endwith %}
+    
+    {% block conteudo %}{% endblock %}
+</body>
+</html>
+```
+
+`templates/quiz_index.html`
+```html
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Bem-vindo ao Quiz!</h1>
+    <p>Teste seus conhecimentos com 3 perguntas.</p>
+    <a href="{{ url_for('pergunta', num=1) }}">Iniciar Quiz</a>
+{% endblock %}
+```
+
+**`templates/quiz_pergunta.html`**
+```html
+{% extends "base.html" %}
+{% block conteudo %}
+    <h2>Pergunta {{ num }} de {{ total }}</h2>
+    <p><strong>{{ pergunta.texto }}</strong></p>
+    
+    <form method="POST">
+        {% for opcao in pergunta.opcoes %}
+            <label>
+                <input type="radio" name="resposta" value="{{ opcao }}" required>
+                {{ opcao }}
+            </label><br>
+        {% endfor %}
+        <br>
+        <button type="submit">Confirmar Resposta</button>
+    </form>
+{% endblock %}
+```
+
+`templates/quiz_resultado.html`
+```html
+{% extends "base.html" %}
+{% block conteudo %}
+    <h1>Resultado Final</h1>
+    <p>Você acertou <strong>{{ acertos }}</strong> de <strong>{{ total }}</strong> perguntas.</p>
+    <a href="{{ url_for('index') }}">Jogar Novamente</a>
+{% endblock %}
+```
+
+</details>
 
 ---
 
