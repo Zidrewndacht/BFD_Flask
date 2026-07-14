@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In — Flaskr{% endblock %}
+
+{% block content %}
+    <h1>Log In</h1>
+    <form method="POST">
+        <label>Username: <input type="text" name="username" required></label><br><br>
+        <label>Password: <input type="password" name="password" required></label><br><br>
+        <button type="submit">Entrar</button>
+    </form>
+    <p><small>Dica de teste: admin / 123</small></p>
+{% endblock %}
