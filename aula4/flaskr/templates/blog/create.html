@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}New Post — Flaskr{% endblock %}
+
+{% block content %}
+    <h1>Novo Post</h1>
+    <form method="POST">
+        <label>
+            Título:
+            <input type="text" name="title" required style="width: 100%; max-width: 500px;">
+        </label>
+        <label>
+            Conteúdo:
+            <textarea name="body" rows="10" style="width: 100%; max-width: 500px;" required></textarea>
+        </label>
+        <button type="submit">Publicar</button>
+        <a href="{{ url_for('blog.index') }}" style="margin-left: 15px;">Cancelar</a>
+    </form>
+{% endblock %}

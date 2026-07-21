@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Post — Flaskr{% endblock %}
+
+{% block content %}
+    <h1>Editar Post</h1>
+    <form method="POST">
+        <label>
+            Título:
+            <input type="text" name="title" value="{{ post['title'] }}" required style="width: 100%; max-width: 500px;">
+        </label>
+        <label>
+            Conteúdo:
+            <textarea name="body" rows="10" style="width: 100%; max-width: 500px;" required>{{ post['body'] }}</textarea>
+        </label>    
+        <button type="submit">Salvar Alterações</button>
+        <a href="{{ url_for('blog.index') }}" style="margin-left: 15px;">Cancelar</a>
+    </form>
+    
+    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ccc; max-width: 500px;">
+    
+    <form method="POST" action="{{ url_for('blog.delete', id=post['id']) }}" onsubmit="return confirm('Tem certeza que deseja deletar este post permanentemente?');">
+        <button type="submit" class="btn-danger">Deletar Post</button>
+    </form>
+{% endblock %}

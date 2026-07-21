@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Flaskr{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('blog.index') }}" class="logo">Flaskr</a>
+        
+        <div class="nav-links">
+            {% if g.user %}
+                <a href="{{ url_for('blog.create') }}">Novo Post</a>
+                <span class="user-info">
+                    {{ g.user['username'] }} 
+                    <a href="{{ url_for('auth.logout') }}">Sair</a>
+                </span>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}">Register</a>
+                <a href="{{ url_for('auth.login') }}">Log In</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flashes">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}" role="alert">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <span class="footer-brand">Flaskr · Built with Flask</span>
+            <nav class="footer-links" aria-label="Links secundários">
+                <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Docs</a>
+                <a href="https://github.com/pallets/flask" target="_blank" rel="noopener">Source</a>
+            </nav>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Flaskr — Blog{% endblock %}
+
+{% block content %}
+    <h1>Posts Recentes</h1>
+    
+    {% for post in posts %}
+        <article class="post">
+            <header>
+                <h2>{{ post['title'] }}</h2>
+                <div class="about">
+                    <small>
+                        Por <strong>{{ post['username'] }}</strong> 
+                        em {{ post['created'].strftime('%d/%m/%Y %H:%M') if post['created'] is not string else post['created'] }}
+                    </small>
+                </div>
+            </header>
+            <p class="body">{{ post['body'] }}</p>
+            
+            {% if g.user and g.user['id'] == post['author_id'] %}
+                <div class="actions">
+                    <a href="{{ url_for('blog.update', id=post['id']) }}" class="btn-edit">Editar</a>
+                </div>
+            {% endif %}
+        </article>
+        
+        {% if not loop.last %}
+            <hr>
+        {% endif %}
+    {% else %}
+        <p>Nenhum post ainda. 
+            {% if g.user %}
+                <a href="{{ url_for('blog.create') }}">Seja o primeiro a publicar!</a>
+            {% endif %}
+        </p>
+    {% endfor %}
+{% endblock %}
