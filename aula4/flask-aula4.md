@@ -93,13 +93,10 @@ def create():
 
 ## 1.4. A Dúvida Clássica: "Por que não guardar o usuário direto na `session`?"
 
-Esta é a pergunta de ouro. Se a `session` já lembra do usuário entre as telas, por que não fazemos `session['user'] = dados_do_usuario` no login e esquecemos o `g` e o banco de dados?
-
-**Três motivos de engenharia:**
+Se a `session` já lembra do usuário entre as telas, por que não fazemos `session['user'] = dados_do_usuario` no login e esquecemos o `g` e o banco de dados?
 
 1. **Tamanho do Cookie:** A `session` do Flask é enviada para o navegador como um Cookie. Navegadores limitam cookies a ~4KB. Guardar objetos complexos, listas de permissões ou textos longos na session vai estourar o limite e quebrar a aplicação silenciosamente. Na `session`, guardamos **apenas o ID** (um simples número inteiro: `session['user_id'] = 1`).
 2. **Dados "Stale" (Desatualizados):** Se a Ana mudar o nome de usuário dela no banco de dados, o cookie dela (a `session`) continuará com o nome antigo até ela fazer logout e login de novo. Usando o `g`, nós usamos o ID da session para buscar o usuário no SQLite **a cada request**. Isso garante que a aplicação sempre vê os dados mais frescos do banco.
-3. **Segurança:** Cookies podem ser inspecionados pelo usuário. Você **nunca** deve colocar dados sensíveis, hashes de senha ou flags de administração (`is_admin=True`) na `session`. O `g` vive apenas na memória RAM do servidor e morre no fim do request. É 100% seguro.
 
 ---
 
@@ -165,7 +162,7 @@ def init_app(app):
 ```
 
 ### O Schema SQL
-Crie o arquivo `flaskr/schema.sql`. Como você já sabe SQL, o foco aqui é apenas notar a sintaxe do SQLite para autoincremento e chaves estrangeiras:
+Crie o arquivo `flaskr/schema.sql`:
 
 ```sql
 -- flaskr/schema.sql
